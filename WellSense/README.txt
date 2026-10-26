@@ -1,29 +1,30 @@
 WellSense
 ========
 
-This package contains a mobile-first PWA named WellSense for a B.Tech seminar (CDQ 413).
+This package contains the complete mobile-first PWA for the seminar project.
 
-Contents:
-- WellSense/index.html
-- WellSense/manifest.json
-- WellSense/service-worker.js
-- WellSense/icons/
+Files included:
+- index.html
+- manifest.json
+- service-worker.js
+- README.txt
+- icons/
 
-How to open it on a phone:
-1. Extract the zip in a folder.
-2. From the extracted folder, either:
-   - open index.html directly in a mobile browser for a quick local test, or
-   - run a simple static server in the same folder.
-3. For a local server command:
+How to open it:
+1. Extract the zip folder containing WellSense.
+2. Open the folder and either:
+   - open index.html directly in a mobile browser for a quick test, or
+   - run a static server from the folder.
+3. Example local server:
    - Python: python -m http.server 8080
-   - then open http://<your-computer-ip>:8080/WellSense or http://localhost:8080/WellSense
-4. On Android: open the page in Chrome and choose "Add to Home Screen" from the browser menu.
+   - Then open http://localhost:8080/WellSense
+4. On Android: open in Chrome and choose "Add to Home Screen".
 5. On iPhone/iPad: open in Safari, tap Share, then tap "Add to Home Screen".
 
-Notes:
-- This app works fully client-side and stores data locally in localStorage.
-- It is installable as a PWA and caches key files for offline use.
-- The app includes demo data toggled in Settings for seminar presentations.
-- USDA FoodData Central lookup works only when a valid API key is added in Settings.
+Important notes:
+- All data is stored locally in browser storage (localStorage).
+- The app is installable and offline-capable through the service worker.
+- USDA FoodData Central lookup only works when a valid API key is entered in Settings.
+- Demo data can be turned on or off in Settings.
 
 Not a medical device.

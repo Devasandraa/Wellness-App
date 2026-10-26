@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="WellSense app icon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="WellSense icon 192">
   <defs>
     <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#0d5c7a"/>
-      <stop offset="100%" stop-color="#17b6b0"/>
+      <stop offset="0%" stop-color="#0f4d6c"/>
+      <stop offset="100%" stop-color="#17b7b2"/>
     </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="36" fill="#0b1d2a"/>
+  <rect width="192" height="192" rx="38" fill="#0b1d2a"/>
   <rect x="18" y="18" width="156" height="156" rx="28" fill="url(#g1)"/>
-  <path d="M62 95c0-20 16-36 36-36 23 0 34 16 34 26 0 18-16 30-24 38-8 8-14 13-14 20 0 2 0 4 2 6h-12c-4-7-6-12-6-18 0-7 12-17 20-25 7-7 12-11 12-18 0-8-6-14-14-14-10 0-18 8-18 18v6H62v-3zm40 39h14v14H102z" fill="#ffffff" opacity="0.95"/>
-  <circle cx="146" cy="56" r="18" fill="#d9fbff" opacity="0.9"/>
-  <path d="M146 42v28M132 56h28" stroke="#0b1d2a" stroke-width="6" stroke-linecap="round"/>
+  <path d="M62 102c0-20 15-34 35-34 23 0 34 15 34 27 0 18-15 29-24 37-9 8-14 13-14 21 0 4 3 7 7 7h13v14H98c-10 0-18-8-18-17 0-10 9-18 19-28 8-8 12-13 12-21 0-10-8-18-18-18-11 0-19 8-19 19v8H62v-8zm43 44h13v13H105z" fill="#ffffff"/>
+  <circle cx="140" cy="58" r="16" fill="#d9fbff" opacity="0.9"/>
+  <path d="M140 44v28M126 58h28" stroke="#0b1d2a" stroke-width="5" stroke-linecap="round"/>
 </svg>
