@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1d2a" />
+  <meta name="description" content="WellSense – Explainable Multimodal AI for Personalized Wellness Monitoring" />
+  <title>WellSense</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #f3f8fb;
+      --bg-strong: #e9f3f8;
+      --card: rgba(255,255,255,0.9);
+      --card-strong: #ffffff;
+      --ink: #102a3e;
+      --muted: #5f7183;
+      --primary: #0d5c7a;
+      --primary-2: #17b6b0;
+      --accent: #2fc2a6;
+      --warning: #ef9d3f;
+      --danger: #e66262;
+      --success: #25a36a;
+      --navy: #0c2237;
+      --shadow: 0 10px 24px rgba(14, 38, 56, 0.12);
+      --ring: 0 0 0 1px rgba(10,40,58,0.04);
+      --chip: rgba(16, 89, 117, 0.08);
+      --bottom-nav-bg: rgba(11, 29, 42, 0.96);
+      --tab-inactive: rgba(201, 225, 235, 0.6);
+      --good: #2fd39d;
+      --yellow: #f4c95d;
+      --red: #ff6b6b;
+      --shadow-soft: 0 14px 28px rgba(11,29,42,0.1);
+    }
+
+    body.dark {
+      --bg: #071923;
+      --bg-strong: #0d2633;
+      --card: rgba(18,36,46,0.9);
+      --card-strong: #132c3b;
+      --ink: #eaf6ff;
+      --muted: #a6c0cf;
+      --primary: #61d4ff;
+      --primary-2: #3ae2c3;
+      --accent: #61d4ff;
+      --warning: #ffc766;
+      --danger: #ff8a8a;
+      --success: #5ae0a9;
+      --navy: #081d2d;
+      --shadow: 0 12px 30px rgba(1,10,18,0.45);
+      --chip: rgba(97,212,255,0.08);
+      --tab-inactive: rgba(255,255,255,0.3);
+      --ring: 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100%;
+    }
+    body {
+      overscroll-behavior: none;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    button, input, select, textarea {
+      font: inherit;
+      border: none;
+      outline: none;
+    }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .app-shell {
+      width: min(100%, 430px);
+      margin: 0 auto;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
+      position: relative;
+      padding-bottom: 85px;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 10px;
+      background: rgba(243,248,251,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,43,60,0.05);
+    }
+    body.dark .topbar {
+      background: rgba(7,25,35,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      box-shadow: var(--shadow-soft);
+      font-size: 14px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(37, 163, 106, 0.12);
+    }
+
+    .screen {
+      display: none;
+      padding: 14px 16px 0;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    .module {
+      background: var(--card);
+      border: 1px solid rgba(10,41,59,0.05);
+      box-shadow: var(--shadow);
+      border-radius: 22px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .module::before {
+      content: "";
+      position: absolute;
+      inset: -30% auto auto -15%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(31,112,151,0.15), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .hero h1, .hero h2, .panel h3, .section-title {
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+    .hero h1 { font-size: 1.7rem; }
+    .hero h2 { font-size: 1.3rem; }
+    .eyebrow {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .big-score {
+      font-size: clamp(2.2rem, 6vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      color: var(--primary);
+    }
+    .score-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .row { display: flex; gap: 12px; }
+    .row.stack { flex-direction: column; }
+    .g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .metric-card {
+      background: rgba(255,255,255,0.48);
+      border: 1px solid rgba(17,43,60,0.04);
+      border-radius: 18px;
+      padding: 12px;
+      min-height: 88px;
+      position: relative;
+      z-index: 1;
+    }
+    body.dark .metric-card {
+      background: rgba(18,36,46,0.8);
+      border-color: rgba(255,255,255,0.04);
+    }
+    .metric-card .k {
+      color: var(--muted);
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .metric-card .v {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0;
+    }
+    .metric-card small {
+      color: var(--muted);
+      display: block;
+      margin-top: 4px;
+    }
+    .badge {
+      background: var(--chip);
+      border-radius: 999px;
+      color: var(--primary);
+      padding: 6px 10px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mini-box {
+      padding: 12px 8px;
+      border-radius: 14px;
+      background: rgba(117,187,215,0.08);
+      text-align: center;
+    }
+    .mini-box strong { display: block; font-size: 1rem; }
+    .mini-box span { color: var(--muted); font-size: 0.72rem; }
+
+    .alert-list, .recommend-list, .factor-list {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .alert-item, .recommend-item, .factor-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(38,122,161,0.05);
+      border: 1px solid rgba(10,41,59,0.04);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: var(--ink);
+    }
+    .alert-item .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--warning);
+      box-shadow: 0 0 0 4px rgba(239,157,63,0.12);
+    }
+    .alert-item.warning .dot { background: var(--warning); }
+    .alert-item.danger .dot { background: var(--danger); }
+    .alert-item.success .dot { background: var(--success); }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--chip);
+      color: var(--primary);
+      border: 1px solid rgba(17,43,60,0.04);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    .field label {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(8,39,54,0.08);
+      color: var(--ink);
+    }
+    body.dark .field input,
+    body.dark .field select,
+    body.dark .field textarea {
+      background: rgba(10,25,34,0.7);
+      border-color: rgba(255,255,255,0.04);
+      color: var(--ink);
+    }
+    .field textarea { resize: vertical; min-height: 88px; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      min-height: 44px;
+      border-radius: 14px;
+      padding: 0 14px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 10px 20px rgba(17,111,154,0.22);
+    }
+    .btn.secondary {
+      background: rgba(14,123,150,0.08);
+      color: var(--primary);
+      border: 1px solid rgba(17,43,60,0.04);
+    }
+    .btn.warning {
+      background: rgba(239,157,63,0.12);
+      color: #b26a18;
+      border: 1px solid rgba(239,157,63,0.2);
+    }
+    .btn.danger {
+      background: rgba(230,98,98,0.12);
+      color: var(--danger);
+      border: 1px solid rgba(230,98,98,0.18);
+    }
+    .btn.full { width: 100%; }
+
+    .list-table {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .entry-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(21, 58, 75, 0.04);
+      border: 1px solid rgba(8,39,54,0.04);
+    }
+    .entry-item strong { display: block; }
+    .entry-item span { color: var(--muted); font-size: 0.75rem; }
+
+    .search-panel {
+      display: grid;
+      gap: 10px;
+    }
+    .food-grid {
+      display: grid;
+      gap: 8px;
+      max-height: 210px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .food-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(18, 51, 66, 0.04);
+      border: 1px solid rgba(17,43,60,0.04);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .food-item strong { font-size: 0.95rem; }
+    .food-item small { color: var(--muted); display: block; }
+
+    .macro-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 0deg 210deg, rgba(17,43,60,0.08) 210deg 360deg);
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(12,34,55,0.08);
+      margin: 10px auto;
+    }
+    .macro-ring::before {
+      content: "";
+      position: absolute;
+      inset: 15px;
+      border-radius: 50%;
+      background: var(--card-strong);
+      box-shadow: inset 0 0 0 1px rgba(17,43,60,0.08);
+    }
+    .macro-ring .center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 800;
+      color: var(--ink);
+      z-index: 1;
+    }
+    .macro-bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 55px 1fr 42px;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(17,43,60,0.08);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    .chart-wrap {
+      margin-top: 12px;
+      padding: 10px 4px 0;
+      border-radius: 16px;
+      background: rgba(17,43,60,0.03);
+    }
+    svg { display: block; width: 100%; height: auto; }
+
+    .tab-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(calc(100% - 18px), 400px);
+      background: var(--bottom-nav-bg);
+      border-radius: 18px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+      padding: 8px 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 6px;
+      z-index: 50;
+    }
+    .tab-btn {
+      background: transparent;
+      color: var(--tab-inactive);
+      height: 50px;
+      border-radius: 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      padding: 4px;
+    }
+    .tab-btn.active {
+      background: rgba(103, 196, 224, 0.18);
+      color: white;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+    .tab-icon { font-size: 1.1rem; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,15,22,0.68);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal.open { display: grid; }
+    .modal-card {
+      width: min(100%, 380px);
+      background: var(--card-strong);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(17,43,60,0.06);
+    }
+    .modal-card h3 { margin: 0 0 10px; }
+    .modal-card p { margin: 0 0 16px; color: var(--muted); }
+    .hidden { display: none !important; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(17,43,60,0.12);
+      background: rgba(11,29,42,0.02);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .score-good { color: var(--success); }
+    .score-mid { color: var(--warning); }
+    .score-bad { color: var(--danger); }
+
+    .trend-card { padding: 4px 0; }
+    .legend {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .legend .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .factor-bar {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .factor-meter {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(17,43,60,0.08);
+    }
+    .factor-meter > span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2ec5a3, #3aa8c0);
+    }
+    .factor-meter.negative > span {
+      background: linear-gradient(90deg, #ff9a6b, #f26f6f);
+      inset: 0 0 0 auto;
+      width: 0;
+    }
+    .factor-value {
+      text-align: right;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+      }
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .report-print, .report-print * { visibility: visible; }
+      .report-print { position: absolute; left: 0; top: 0; width: 100%; }
+      .bottom-nav, .topbar, .modal, .screen:not(.active) { display: none !important; }
+      .screen.active { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">W</div>
+        <span>WellSense</span>
+      </div>
+      <div class="status-dot" aria-label="system healthy"></div>
+    </header>
+
+    <main id="screen-home" class="screen active">
+      <section class="hero">
+        <div>
+          <span class="eyebrow">Today</span>
+          <h1 id="welcome-name">Hello</h1>
+        </div>
+        <span class="badge" id="date-badge">--</span>
+      </section>
+
+      <section class="module">
+        <div class="row" style="align-items:center;justify-content:space-between;">
+          <div>
+            <div class="eyebrow">Cardiac wellness score</div>
+            <div class="big-score" id="home-score">--</div>
+            <span class="score-label">0–100, compared with your baseline</span>
+          </div>
+          <div class="macro-ring" id="score-ring">
+            <div class="center"><span id="score-ring-text">--</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="g2">
+        <div class="metric-card">
+          <div class="k">Heart rate <span class="badge" id="hr-status">--</span></div>
+          <p class="v" id="home-hr">--</p>
+          <small>Resting HR</small>
+        </div>
+        <div class="metric-card">
+          <div class="k">Sleep <span class="badge" id="sleep-status">--</span></div>
+          <p class="v" id="home-sleep">--</p>
+          <small>Hours last night</small>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-top:12px;">
+        <div class="metric-card">
+          <div class="k">Steps</div>
+          <p class="v" id="home-steps">--</p>
+          <small>Daily movement</small>
+        </div>
+        <div class="metric-card">
+          <div class="k">Mood</div>
+          <p class="v" id="home-mood">--</p>
+          <small>Current check-in</small>
+        </div>
+      </div>
+
+      <section class="module trend-card">
+        <div class="row" style="justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <h3>Weekly trend</h3>
+          <span class="badge" id="trend-badge">Stable</span>
+        </div>
+        <div id="weekly-chart"></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:#17b6b0"></i> Wellness score</span>
+          <span><i class="swatch" style="background:#f4c95d"></i> Calories</span>
+        </div>
+      </section>
+
+      <section class="module">
+        <h3>Alerts</h3>
+        <ul id="alerts-list" class="alert-list"></ul>
+      </section>
+    </main>
+
+    <main id="screen-nutrition" class="screen">
+      <section class="module">
+        <div class="row" style="justify-content:space-between;">
+          <div>
+            <span class="eyebrow">Nutrition</span>
+            <h2>Meals & macros</h2>
+          </div>
+          <span class="badge" id="daily-calories-badge">0 kcal</span>
+        </div>
+        <div class="macro-ring" id="nutrition-ring" style="width: 96px; height:96px; margin-top: 12px;">
+          <div class="center"><span id="nutrition-ring-text">0%</span></div>
+        </div>
+        <div class="macro-bars" id="macro-bars"></div>
+      </section>
+
+      <section class="module">
+        <div class="search-panel">
+          <div class="field">
+            <label for="food-search">Search foods</label>
+            <input id="food-search" type="text" placeholder="Try idli, oats, paneer, apple..." />
+          </div>
+          <div class="btn-row">
+            <button class="btn secondary" id="search-food-btn">Search</button>
+            <button class="btn secondary" id="lookup-usda-btn">USDA lookup</button>
+          </div>
+        </div>
+        <div id="food-results" class="food-grid"></div>
+      </section>
+
+      <section class="module">
+        <h3>Add meal entry</h3>
+        <form id="nutrition-form">
+          <div class="field">
+            <label>Food</label>
+            <input id="food-name" type="text" placeholder="Selected food" />
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label>Meal type</label>
+              <select id="meal-type">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="snack">Snack</option>
+                <option value="dinner">Dinner</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Unit</label>
+              <select id="portion-unit">
+                <option value="g">g</option>
+                <option value="cup">cup</option>
+                <option value="bowl">bowl</option>
+                <option value="piece">piece</option>
+                <option value="tbsp">tbsp</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="g2">
+            <div class="field">
+              <label>Quantity</label>
+              <input id="portion-qty" type="number" min="0" step="0.1" value="100" />
+            </div>
+            <div class="field">
+              <label>Direct grams</label>
+              <input id="grams-direct" type="number" min="0" step="1" placeholder="Optional" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="submit" class="btn primary full">Add meal</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="module">
+        <h3>Today’s meals</h3>
+        <div id="meal-list" class="list-table"></div>
+      </section>
+    </main>
+
+    <main id="screen-body" class="screen">
+      <section class="module">
+        <span class="eyebrow">Physical monitoring</span>
+        <h2>Wearable signals</h2>
+        <div class="btn-row" style="margin-top: 10px;">
+          <button id="simulate-sync-btn" class="btn primary">Simulate smartwatch sync</button>
+        </div>
+      </section>
+
+      <section class="module">
+        <h3>Manual entry</h3>
+        <form id="body-form">
+          <div class="g2">
+            <div class="field">
+              <label for="hr-value">Heart rate</label>
+              <input id="hr-value" type="number" min="30" max="220" step="1" value="72" />
+            </div>
+            <div class="field">
+              <label for="rhr-value">Resting HR</label>
+              <input id="rhr-value" type="number" min="30" max="120" step="1" value="62" />
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label for="hrv-value">HRV</label>
+              <input id="hrv-value" type="number" min="10" max="200" step="1" value="48" />
+            </div>
+            <div class="field">
+              <label for="steps-value">Steps</label>
+              <input id="steps-value" type="number" min="0" max="50000" step="1" value="6800" />
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label for="sleep-hours">Sleep hours</label>
+              <input id="sleep-hours" type="number" min="0" max="18" step="0.1" value="7.4" />
+            </div>
+            <div class="field">
+              <label for="sleep-quality">Sleep quality</label>
+              <input id="sleep-quality" type="number" min="0" max="100" step="1" value="78" />
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label for="spo2-value">SpO₂</label>
+              <input id="spo2-value" type="number" min="80" max="100" step="1" value="98" />
+            </div>
+            <div class="field">
+              <label for="activity-min">Activity minutes</label>
+              <input id="activity-min" type="number" min="0" max="400" step="1" value="46" />
+            </div>
+          </div>
+          <button type="submit" class="btn primary full">Save wearable data</button>
+        </form>
+      </section>
+
+      <section class="module">
+        <h3>Trend overview</h3>
+        <div id="body-chart"></div>
+      </section>
+    </main>
+
+    <main id="screen-mind" class="screen">
+      <section class="module">
+        <span class="eyebrow">Mental wellness</span>
+        <h2>Mood & digital signals</h2>
+        <div class="chip-row" id="mood-emoji-row">
+          <button class="chip" data-mood="1" type="button">😞</button>
+          <button class="chip" data-mood="2" type="button">😕</button>
+          <button class="chip" data-mood="3" type="button">🙂</button>
+          <button class="chip" data-mood="4" type="button">😊</button>
+          <button class="chip" data-mood="5" type="button">😁</button>
+        </div>
+      </section>
+
+      <section class="module">
+        <form id="mind-form">
+          <div class="field">
+            <label for="screen-time">Screen time today (min)</label>
+            <input id="screen-time" type="number" min="0" max="600" step="5" value="220" />
+          </div>
+          <div class="field">
+            <label for="app-switches">App-switching frequency</label>
+            <input id="app-switches" type="number" min="0" max="200" step="1" value="24" />
+          </div>
+          <div class="field">
+            <label for="typing-speed">Typing speed (wpm)</label>
+            <input id="typing-speed" type="number" min="0" max="200" step="1" value="50" />
+          </div>
+          <div class="field">
+            <label for="night-usage">Night-time usage (min)</label>
+            <input id="night-usage" type="number" min="0" max="200" step="1" value="30" />
+          </div>
+          <button type="submit" class="btn primary full">Save mental check-in</button>
+        </form>
+      </section>
+
+      <section class="module">
+        <h3>Indicative estimate</h3>
+        <div class="g2">
+          <div class="metric-card">
+            <div class="k">Mood index</div>
+            <p class="v" id="mind-mood-score">--</p>
+            <small>Representative</small>
+          </div>
+          <div class="metric-card">
+            <div class="k">Stress estimate</div>
+            <p class="v" id="mind-stress-score">--</p>
+            <small>Indicative only</small>
+          </div>
+        </div>
+        <p style="margin:12px 0 0; color: var(--muted); font-size: 0.8rem;">This estimate is for reflection and is not a diagnosis or medical assessment.</p>
+      </section>
+    </main>
+
+    <main id="screen-insights" class="screen">
+      <section class="module report-print">
+        <span class="eyebrow">Explainable AI</span>
+        <h2>Wellness insight engine</h2>
+        <div class="row" style="align-items:flex-end; justify-content:space-between; margin-top:10px;">
+          <div>
+            <div class="big-score" id="insight-score">--</div>
+            <span class="score-label">Cardiac wellness score</span>
+          </div>
+          <span class="badge" id="insight-tier">--</span>
+        </div>
+      </section>
+
+      <section class="module">
+        <h3>Why this score?</h3>
+        <div id="factor-chart"></div>
+        <div class="btn-row" style="margin-top: 12px;">
+          <button class="btn secondary" id="show-factors-btn">Refresh explanation</button>
+        </div>
+      </section>
+
+      <section class="module">
+        <h3>Action plan</h3>
+        <ul id="recommendations-list" class="recommend-list"></ul>
+      </section>
+    </main>
+
+    <main id="screen-reports" class="screen">
+      <section class="module">
+        <span class="eyebrow">Reports</span>
+        <h2>Summary & export</h2>
+        <div class="btn-row" style="margin-top: 12px;">
+          <button class="btn primary" id="print-report-btn">Print / Save PDF</button>
+          <button class="btn secondary" id="export-json-btn">Export JSON</button>
+          <button class="btn secondary" id="export-csv-btn">Export CSV</button>
+        </div>
+      </section>
+
+      <section class="module report-print">
+        <h3>Wellness summary</h3>
+        <div id="report-summary"></div>
+      </section>
+    </main>
+
+    <main id="screen-settings" class="screen">
+      <section class="module">
+        <span class="eyebrow">Profile</span>
+        <h2>Baseline & settings</h2>
+        <form id="profile-form">
+          <div class="field">
+            <label>Name</label>
+            <input id="profile-name" type="text" />
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label>Age</label>
+              <input id="profile-age" type="number" min="10" max="100" />
+            </div>
+            <div class="field">
+              <label>Sex</label>
+              <select id="profile-sex">
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field">
+              <label>Height (cm)</label>
+              <input id="profile-height" type="number" min="120" max="220" />
+            </div>
+            <div class="field">
+              <label>Weight (kg)</label>
+              <input id="profile-weight" type="number" min="30" max="220" step="0.1" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Goal</label>
+            <input id="profile-goal" type="text" placeholder="Improve cardio health" />
+          </div>
+          <button type="submit" class="btn primary full">Save profile & baseline</button>
+        </form>
+      </section>
+
+      <section class="module">
+        <h3>Preferences</h3>
+        <div class="g2">
+          <div class="field">
+            <label>Units</label>
+            <select id="setting-units">
+              <option value="metric">Metric (kg/cm)</option>
+              <option value="imperial">Imperial (lb/in)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Theme</label>
+            <select id="setting-theme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>PIN lock (optional)</label>
+          <input id="setting-pin" type="password" maxlength="6" inputmode="numeric" placeholder="1234" />
+        </div>
+        <div class="field">
+          <label>USDA FoodData Central API key</label>
+          <input id="setting-usda-key" type="password" placeholder="Paste your key here" />
+        </div>
+        <label class="field" style="display:flex; align-items:center; gap:10px; font-weight:600; color:var(--ink);">
+          <input id="setting-demo" type="checkbox" />
+          <span>Preload demo data</span>
+        </label>
+        <div class="btn-row" style="margin-top: 8px;">
+          <button class="btn secondary" id="demo-seed-btn">Load demo data</button>
+          <button class="btn danger" id="reset-data-btn">Reset app data</button>
+        </div>
+      </section>
+
+      <section class="module">
+        <h3>About</h3>
+        <p style="margin:0; color: var(--muted); line-height:1.5;">WellSense is a personal wellness monitoring prototype for educational use. It provides local, explainable health insights for reflection and planning, but it is not a medical device and not a diagnosis. <strong>Not a medical device.</strong></p>
+      </section>
+    </main>
+
+    <nav class="tab-bar" aria-label="Main navigation">
+      <button class="tab-btn active" data-tab="home" type="button"><span class="tab-icon">🏠</span><span>Home</span></button>
+      <button class="tab-btn" data-tab="nutrition" type="button"><span class="tab-icon">🥗</span><span>Nutrition</span></button>
+      <button class="tab-btn" data-tab="body" type="button"><span class="tab-icon">💓</span><span>Body</span></button>
+      <button class="tab-btn" data-tab="mind" type="button"><span class="tab-icon">🧠</span><span>Mind</span></button>
+      <button class="tab-btn" data-tab="insights" type="button"><span class="tab-icon">📊</span><span>Insights</span></button>
+      <button class="tab-btn" data-tab="reports" type="button" style="display:none;"><span class="tab-icon">📄</span><span>Reports</span></button>
+      <button class="tab-btn" data-tab="settings" type="button" style="display:none;"><span class="tab-icon">⚙️</span><span>Settings</span></button>
+    </nav>
+  </div>
+
+  <div id="lock-modal" class="modal open" aria-live="polite">
+    <div class="modal-card">
+      <h3>Unlock WellSense</h3>
+      <p>Enter your personal PIN to continue.</p>
+      <div class="field">
+        <label>PIN</label>
+        <input id="lock-pin" type="password" inputmode="numeric" maxlength="6" placeholder="••••" />
+      </div>
+      <div class="btn-row" style="margin-top: 12px;">
+        <button class="btn primary full" id="unlock-btn">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="onboarding-modal" class="modal open" aria-live="polite">
+    <div class="modal-card">
+      <h3>Welcome to WellSense</h3>
+      <p>Set up your baseline to personalize insights and recommendations.</p>
+      <form id="onboarding-form">
+        <div class="field">
+          <label>Name</label>
+          <input id="onboard-name" type="text" placeholder="Your name" required />
+        </div>
+        <div class="g2">
+          <div class="field">
+            <label>Age</label>
+            <input id="onboard-age" type="number" min="10" max="90" required />
+          </div>
+          <div class="field">
+            <label>Sex</label>
+            <select id="onboard-sex">
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="field">
+            <label>Height (cm)</label>
+            <input id="onboard-height" type="number" min="120" max="220" required />
+          </div>
+          <div class="field">
+            <label>Weight (kg)</label>
+            <input id="onboard-weight" type="number" min="30" max="220" step="0.1" required />
+          </div>
+        </div>
+        <div class="field">
+          <label>Goal</label>
+          <input id="onboard-goal" type="text" placeholder="Improve cardio health" required />
+        </div>
+        <button type="submit" class="btn primary full">Start tracking</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'wellsense_app_v1';
+      const FOOD_DB = [
+        { name: 'Idli', calories: 58, carbs: 12, protein: 2.5, fat: 0.6, sugar: 0.2, sodium: 4, unit: 'piece', factor: 34 },
+        { name: 'Dosa', calories: 162, carbs: 26, protein: 4.5, fat: 5.5, sugar: 1.2, sodium: 320, unit: 'piece', factor: 90 },
+        { name: 'Plain Rice', calories: 130, carbs: 28, protein: 2.7, fat: 0.3, sugar: 0.1, sodium: 1, unit: 'bowl', factor: 180 },
+        { name: 'Chapati', calories: 120, carbs: 22, protein: 3.6, fat: 2.4, sugar: 0.2, sodium: 100, unit: 'piece', factor: 35 },
+        { name: 'Dal Tadka', calories: 134, carbs: 12, protein: 9, fat: 5, sugar: 1.1, sodium: 180, unit: 'bowl', factor: 200 },
+        { name: 'Paneer', calories: 265, carbs: 5, protein: 18, fat: 20, sugar: 3, sodium: 115, unit: 'piece', factor: 80 },
+        { name: 'Chicken Curry', calories: 200, carbs: 8, protein: 26, fat: 9, sugar: 3, sodium: 430, unit: 'bowl', factor: 180 },
+        { name: 'Rajma', calories: 132, carbs: 20, protein: 8, fat: 1.2, sugar: 1.4, sodium: 164, unit: 'bowl', factor: 200 },
+        { name: 'Khichdi', calories: 150, carbs: 25, protein: 5, fat: 3.5, sugar: 0.6, sodium: 120, unit: 'bowl', factor: 220 },
+        { name: 'Poha', calories: 110, carbs: 23, protein: 2.6, fat: 1.5, sugar: 0.4, sodium: 130, unit: 'bowl', factor: 180 },
+        { name: 'Greek Yogurt', calories: 59, carbs: 3.6, protein: 10, fat: 0.4, sugar: 3.6, sodium: 36, unit: 'cup', factor: 245 },
+        { name: 'Banana', calories: 89, carbs: 23, protein: 1.1, fat: 0.3, sugar: 12, sodium: 1, unit: 'piece', factor: 118 },
+        { name: 'Apple', calories: 52, carbs: 14, protein: 0.3, fat: 0.2, sugar: 10, sodium: 1, unit: 'piece', factor: 180 },
+        { name: 'Oats', calories: 389, carbs: 66, protein: 16.9, fat: 6.9, sugar: 0.8, sodium: 0, unit: 'cup', factor: 80 },
+        { name: 'Eggs', calories: 155, carbs: 1.1, protein: 13, fat: 11, sugar: 1.1, sodium: 142, unit: 'piece', factor: 50 },
+        { name: 'Chicken Breast', calories: 165, carbs: 0, protein: 31, fat: 3.6, sugar: 0, sodium: 74, unit: 'piece', factor: 120 },
+        { name: 'Salad Bowl', calories: 90, carbs: 15, protein: 3, fat: 2, sugar: 4, sodium: 120, unit: 'bowl', factor: 220 },
+        { name: 'Samosa', calories: 262, carbs: 20, protein: 5.8, fat: 16, sugar: 0.8, sodium: 350, unit: 'piece', factor: 65 },
+        { name: 'Almonds', calories: 579, carbs: 22, protein: 21, fat: 50, sugar: 4, sodium: 1, unit: 'tbsp', factor: 7 },
+        { name: 'Avocado', calories: 160, carbs: 8.5, protein: 2, fat: 15, sugar: 0.7, sodium: 7, unit: 'piece', factor: 150 },
+        { name: 'Brown Bread', calories: 83, carbs: 14, protein: 4, fat: 1.2, sugar: 1.8, sodium: 149, unit: 'slice', factor: 38 },
+        { name: 'Lentil Soup', calories: 116, carbs: 18, protein: 9, fat: 2, sugar: 2.5, sodium: 270, unit: 'bowl', factor: 220 },
+        { name: 'Milk', calories: 42, carbs: 5, protein: 3.4, fat: 1, sugar: 5, sodium: 49, unit: 'cup', factor: 240 },
+        { name: 'Coconut Water', calories: 19, carbs: 3.7, protein: 0.7, fat: 0.2, sugar: 2.6, sodium: 105, unit: 'ml', factor: 240 },
+        { name: 'Trail Mix', calories: 520, carbs: 30, protein: 15, fat: 35, sugar: 14, sodium: 180, unit: 'tbsp', factor: 18 },
+        { name: 'Moong Dal', calories: 105, carbs: 16, protein: 8.5, fat: 0.4, sugar: 1.6, sodium: 60, unit: 'bowl', factor: 200 },
+        { name: 'Cucumber', calories: 16, carbs: 3.6, protein: 0.7, fat: 0.1, sugar: 1.7, sodium: 2, unit: 'cup', factor: 130 },
+        { name: 'Rice Bowl', calories: 200, carbs: 44, protein: 4, fat: 0.8, sugar: 0.2, sodium: 2, unit: 'bowl', factor: 220 },
+        { name: 'Smoothie', calories: 180, carbs: 30, protein: 8, fat: 3, sugar: 12, sodium: 80, unit: 'cup', factor: 250 }
+      ];
+
+      const defaultState = () => ({
+        profile: {
+          name: '',
+          age: '',
+          sex: 'male',
+          height: '',
+          weight: '',
+          goal: ''
+        },
+        settings: {
+          theme: 'light',
+          units: 'metric',
+          pin: '',
+          usdaApiKey: '',
+          demoMode: true,
+          baselineSaved: false
+        },
+        nutritionEntries: [],
+        wearableEntries: [],
+        bloodReports: [],
+        mentalEntries: [],
+        baseline: {
+          restingHeartRate: 62,
+          sleep: 7.5,
+          steps: 8000,
+          mood: 3,
+          totalCholesterol: 180,
+          bloodPressureSystolic: 120
+        }
+      });
+
+      let state = loadState();
+      let currentTab = 'home';
+      let selectedMood = 3;
+      let lockUnlocked = false;
+
+      function loadState() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (!saved) return defaultState();
+          return { ...defaultState(), ...saved, settings: { ...defaultState().settings, ...(saved.settings || {}) }, profile: { ...defaultState().profile, ...(saved.profile || {}) }, baseline: { ...defaultState().baseline, ...(saved.baseline || {}) } };
+        } catch (e) {
+          return defaultState();
+        }
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function getTodayKey(date = new Date()) {
+        return date.toISOString().slice(0, 10);
+      }
+
+      function ensureDemoData() {
+        if (!state.settings.demoMode && state.nutritionEntries.length === 0 && state.wearableEntries.length === 0 && state.bloodReports.length === 0 && state.mentalEntries.length === 0) {
+          return;
+        }
+        if (!state.settings.demoMode) return;
+        if (state.nutritionEntries.length || state.wearableEntries.length || state.bloodReports.length || state.mentalEntries.length) return;
+
+        const today = new Date();
+        const baseDate = offsetDate(today, 0);
+
+        state.profile = {
+          name: 'Aarav', age: 28, sex: 'male', height: 176, weight: 72, goal: 'Improve cardio health'
+        };
+
+        state.baseline = { restingHeartRate: 62, sleep: 7.5, steps: 8000, mood: 3, totalCholesterol: 180, bloodPressureSystolic: 120 };
+        state.settings.baselineSaved = true;
+
+        const meals = [
+          { date: baseDate, mealType: 'breakfast', name: 'Oats', quantity: 1, unit: 'cup', grams: 80 },
+          { date: baseDate, mealType: 'lunch', name: 'Chapati', quantity: 3, unit: 'piece', grams: 105 },
+          { date: baseDate, mealType: 'snack', name: 'Banana', quantity: 1, unit: 'piece', grams: 118 },
+          { date: baseDate, mealType: 'dinner', name: 'Chicken Curry', quantity: 1.2, unit: 'bowl', grams: 220 }
+        ];
+
+        state.nutritionEntries = meals.map(item => ({
+          ...item,
+          calories: estimateFood(item.name, item.grams).calories,
+          carbs: estimateFood(item.name, item.grams).carbs,
+          protein: estimateFood(item.name, item.grams).protein,
+          fat: estimateFood(item.name, item.grams).fat,
+          sugar: estimateFood(item.name, item.grams).sugar,
+          sodium: estimateFood(item.name, item.grams).sodium,
+          id: cryptoRandomId()
+        }));
+
+        state.wearableEntries = [
+          { date: getTodayKey(today), hr: 74, restingHeartRate: 64, hrv: 42, steps: 8420, sleepHours: 7.2, sleepQuality: 82, spo2: 98, activityMinutes: 46 },
+          { date: offsetDate(today, -1), hr: 72, restingHeartRate: 61, hrv: 46, steps: 9100, sleepHours: 7.8, sleepQuality: 87, spo2: 99, activityMinutes: 51 },
+          { date: offsetDate(today, -2), hr: 75, restingHeartRate: 66, hrv: 38, steps: 7800, sleepHours: 6.7, sleepQuality: 72, spo2: 98, activityMinutes: 39 },
+          { date: offsetDate(today, -3), hr: 71, restingHeartRate: 60, hrv: 50, steps: 10400, sleepHours: 8.0, sleepQuality: 94, spo2: 99, activityMinutes: 61 }
+        ];
+
+        state.bloodReports = [
+          { date: offsetDate(today, -30), totalCholesterol: 174, ldl: 98, hdl: 52, triglycerides: 118, glucose: 92, hba1c: 5.4, systolic: 118, diastolic: 74, hemoglobin: 13.8 },
+          { date: offsetDate(today, -10), totalCholesterol: 181, ldl: 101, hdl: 50, triglycerides: 128, glucose: 94, hba1c: 5.5, systolic: 120, diastolic: 78, hemoglobin: 14.1 },
+          { date: getTodayKey(today), totalCholesterol: 178, ldl: 96, hdl: 54, triglycerides: 122, glucose: 91, hba1c: 5.4, systolic: 116, diastolic: 72, hemoglobin: 13.9 }
+        ];
+
+        state.mentalEntries = [
+          { date: getTodayKey(today), mood: 4, stress: 32, screenTime: 220, appSwitches: 36, typingSpeed: 48, nightUsage: 28 },
+          { date: offsetDate(today, -1), mood: 3, stress: 44, screenTime: 280, appSwitches: 44, typingSpeed: 51, nightUsage: 36 },
+          { date: offsetDate(today, -2), mood: 2, stress: 58, screenTime: 310, appSwitches: 52, typingSpeed: 46, nightUsage: 48 }
+        ];
+      }
+
+      function applyTheme() {
+        document.body.classList.toggle('dark', state.settings.theme === 'dark');
+      }
+
+      function offsetDate(date, days) {
+        const d = new Date(date);
+        d.setDate(d.getDate() + days);
+        return d.toISOString().slice(0, 10);
+      }
+
+      function cryptoRandomId() {
+        if (window.crypto && crypto.getRandomValues) {
+          const arr = new Uint32Array(1);
+          crypto.getRandomValues(arr);
+          return 'id' + arr[0].toString(16);
+        }
+        return 'id' + Date.now() + Math.random().toString(16).slice(2);
+      }
+
+      function normalizeNumber(value, fallback = 0) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function estimateFood(name, grams) {
+        const item = FOOD_DB.find(food => food.name.toLowerCase() === name.toLowerCase());
+        if (!item) return { calories: 0, carbs: 0, protein: 0, fat: 0, sugar: 0, sodium: 0 };
+        const ratio = grams / 100;
+        return {
+          calories: item.calories * ratio,
+          carbs: item.carbs * ratio,
+          protein: item.protein * ratio,
+          fat: item.fat * ratio,
+          sugar: item.sugar * ratio,
+          sodium: item.sodium * ratio
+        };
+      }
+
+      function unitToGrams(quantity, unit, foodName) {
+        const food = FOOD_DB.find(f => f.name.toLowerCase() === foodName.toLowerCase());
+        const map = {
+          g: 1,
+          cup: 240,
+          bowl: 220,
+          piece: food ? food.factor || 60 : 60,
+          tbsp: 15,
+          ml: 1
+        };
+        return (normalizeNumber(quantity, 0) * (map[unit] || 100));
+      }
+
+      function getProfileSummary() {
+        if (!state.profile.name) return 'Please complete onboarding';
+        return `${state.profile.name} • ${state.profile.age} years`;
+      }
+
+      function renderHome() {
+        const name = state.profile.name || 'WellSense user';
+        document.getElementById('welcome-name').textContent = 'Hello, ' + name.split(' ')[0];
+        document.getElementById('date-badge').textContent = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+        const { score, tier } = computeWellnessScore();
+        document.getElementById('home-score').textContent = score;
+        document.getElementById('score-ring').style.background = `conic-gradient(var(--primary) 0deg ${(score/100)*360}deg, rgba(17,43,60,0.08) ${(score/100)*360}deg 360deg)`;
+        document.getElementById('score-ring-text').textContent = score;
+
+        const latestWearable = getLatestWearable();
+        const latestMental = getLatestMental();
+        const todayNutrition = getDailyTotals(new Date());
+
+        document.getElementById('home-hr').textContent = latestWearable ? `${Math.round(latestWearable.hr)} bpm` : '--';
+        document.getElementById('home-sleep').textContent = latestWearable ? `${latestWearable.sleepHours.toFixed(1)}h` : '--';
+        document.getElementById('home-steps').textContent = latestWearable ? `${Math.round(latestWearable.steps).toLocaleString()}` : '--';
+        document.getElementById('home-mood').textContent = latestMental ? emojiFromMood(latestMental.mood) : '--';
+
+        const hrStatus = latestWearable && Math.abs(latestWearable.restingHeartRate - (state.baseline.restingHeartRate || 62)) > 8 ? 'Elevated' : 'Stable';
+        const sleepStatus = latestWearable && latestWearable.sleepHours < 6.5 ? 'Low' : 'Good';
+        document.getElementById('hr-status').textContent = hrStatus;
+        document.getElementById('sleep-status').textContent = sleepStatus;
+
+        const trendData = getWeeklyScores();
+        document.getElementById('trend-badge').textContent = trendData.avg >= 70 ? 'Improving' : trendData.avg >= 55 ? 'Stable' : 'Watch closely';
+        document.getElementById('weekly-chart').innerHTML = renderLineChart(trendData.points, { width: 320, height: 120, color: '#17b6b0' }, 'score');
+
+        const alerts = getAlerts();
+        const alertsList = document.getElementById('alerts-list');
+        alertsList.innerHTML = alerts.length ? alerts.map(a => `<li class="alert-item ${a.level}"><span class="dot"></span><span>${a.text}</span></li>`).join('') : '<li class="empty">You are tracking well today.</li>';
+      }
+
+      function renderNutrition() {
+        const foodSearchInput = document.getElementById('food-search');
+        const resultsEl = document.getElementById('food-results');
+        const query = foodSearchInput.value.trim().toLowerCase();
+        const filtered = !query ? FOOD_DB.slice(0, 8) : FOOD_DB.filter(food => food.name.toLowerCase().includes(query));
+        resultsEl.innerHTML = filtered.length ? filtered.map(food => `
+          <button class="food-item" type="button" data-food="${food.name}">
+            <div>
+              <strong>${food.name}</strong>
+              <small>${food.calories} kcal / 100 g</small>
+            </div>
+            <span class="badge">Add</span>
+          </button>
+        `).join('') : '<div class="empty">No foods found. Try a different keyword.</div>';
+
+        document.querySelectorAll('.food-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const name = item.dataset.food;
+            const food = FOOD_DB.find(f => f.name === name);
+            if (!food) return;
+            document.getElementById('food-name').value = food.name;
+            document.getElementById('portion-unit').value = food.unit || 'g';
+            document.getElementById('portion-qty').value = 1;
+            document.getElementById('grams-direct').value = '';
+          });
+        });
+
+        const totals = getDailyTotals(new Date());
+        const calories = totals.calories;
+        const targetCalories = getTargetCalories();
+        const progress = clamp((calories / Math.max(targetCalories, 1)) * 100, 0, 100);
+        document.getElementById('daily-calories-badge').textContent = `${Math.round(calories)} kcal`;
+        document.getElementById('nutrition-ring').style.background = `conic-gradient(var(--primary) 0deg ${(progress/100)*360}deg, rgba(17,43,60,0.08) ${(progress/100)*360}deg 360deg)`;
+        document.getElementById('nutrition-ring-text').textContent = Math.round(progress) + '%';
+
+        const macroPercent = totals.macros || { carbs: 0, protein: 0, fat: 0 };
+        const macroBars = [
+          { label: 'Carbs', value: macroPercent.carbs, color: 'linear-gradient(90deg, #1ed0a7, #46c7d8)' },
+          { label: 'Protein', value: macroPercent.protein, color: 'linear-gradient(90deg, #7ec0ff, #6c8cff)' },
+          { label: 'Fat', value: macroPercent.fat, color: 'linear-gradient(90deg, #f7c76a, #f39d69)' }
+        ];
+
+        document.getElementById('macro-bars').innerHTML = macroBars.map(item => `
+          <div class="bar-row">
+            <span>${item.label}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${clamp(item.value, 0, 100)}%; background:${item.color};"></div></div>
+            <strong>${Math.round(item.value)}%</strong>
+          </div>
+        `).join('');
+
+        renderMealsList();
+      }
+
+      function renderMealsList() {
+        const today = getTodayKey(new Date());
+        const entries = state.nutritionEntries.filter(entry => entry.date === today);
+        const list = document.getElementById('meal-list');
+        if (!entries.length) {
+          list.innerHTML = '<div class="empty">No foods logged today yet. Start by searching your meal.</div>';
+          return;
+        }
+
+        list.innerHTML = entries.map((entry, idx) => `
+          <div class="entry-item">
+            <div>
+              <strong>${entry.name}</strong>
+              <span>${entry.mealType} • ${entry.quantity} ${entry.unit} • ${Math.round(entry.calories)} kcal</span>
+            </div>
+            <button class="btn danger" data-remove-meal="${idx}" type="button">Remove</button>
+          </div>
+        `).join('');
+
+        list.querySelectorAll('[data-remove-meal]').forEach(button => {
+          button.addEventListener('click', () => {
+            const index = Number(button.dataset.removeMeal);
+            state.nutritionEntries = state.nutritionEntries.filter((_, i) => i !== index);
+            saveState();
+            renderNutrition();
+            renderHome();
+            renderReports();
+          });
+        });
+      }
+
+      function renderBody() {
+        const chartTarget = document.getElementById('body-chart');
+        const series = getWearableSeries(7);
+        chartTarget.innerHTML = renderLineChart(series, { width: 320, height: 120, color: '#2fc2a6' }, 'score');
+      }
+
+      function renderMind() {
+        const latest = getLatestMental();
+        const moodScore = latest ? latest.mood * 20 : 60;
+        const stressScore = latest ? latest.stress : 35;
+        document.getElementById('mind-mood-score').textContent = latest ? `${latest.mood}/5` : '--';
+        document.getElementById('mind-stress-score').textContent = latest ? `${Math.round(stressScore)}%` : '--';
+
+        document.querySelectorAll('[data-mood]').forEach(item => {
+          const value = Number(item.dataset.mood);
+          item.style.background = value === selectedMood ? 'linear-gradient(135deg, var(--primary), var(--primary-2))' : 'var(--chip)';
+          item.style.color = value === selectedMood ? '#fff' : 'var(--primary)';
+          item.onclick = () => {
+            selectedMood = value;
+            renderMind();
+          };
+        });
+      }
+
+      function renderInsights() {
+        const { score, tier, factors, recommendations } = computeWellnessScore();
+        document.getElementById('insight-score').textContent = score;
+        document.getElementById('insight-tier').textContent = tier;
+        document.getElementById('insight-tier').className = 'badge';
+        if (score >= 75) document.getElementById('insight-tier').style.background = 'rgba(37,163,106,0.12)';
+        else if (score >= 50) document.getElementById('insight-tier').style.background = 'rgba(239,157,63,0.12)';
+        else document.getElementById('insight-tier').style.background = 'rgba(230,98,98,0.12)';
+
+        const factorChart = document.getElementById('factor-chart');
+        factorChart.innerHTML = factors.map(f => {
+          const absValue = Math.abs(f.value);
+          const width = clamp((absValue / 15) * 100, 8, 100);
+          const neg = f.value < 0;
+          return `
+            <div class="factor-item" style="display:block; padding:12px;">
+              <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong>${f.label}</strong>
+                <span class="badge">${f.value > 0 ? '+' : ''}${f.value} pts</span>
+              </div>
+              <div class="factor-bar">
+                <div class="factor-meter ${neg ? 'negative' : ''}"><span style="width:${width}%"></span></div>
+                <div class="factor-value">${f.value > 0 ? '+' : ''}${f.value}</div>
+              </div>
+              <div style="color:var(--muted); font-size:0.8rem; line-height:1.4;">${f.explanation}</div>
+            </div>
+          `;
+        }).join('');
+
+        const recommendationsList = document.getElementById('recommendations-list');
+        recommendationsList.innerHTML = recommendations.map(item => `<li class="recommend-item"><span class="dot" style="background:${item.level === 'high' ? 'var(--danger)' : item.level === 'mid' ? 'var(--warning)' : 'var(--success)'};"></span><span>${item.text}</span></li>`).join('');
+      }
+
+      function renderReports() {
+        const today = new Date();
+        const totals = getDailyTotals(today);
+        const wear = getLatestWearable();
+        const mental = getLatestMental();
+        const { score } = computeWellnessScore();
+
+        document.getElementById('report-summary').innerHTML = `
+          <div class="mini-grid">
+            <div class="mini-box"><strong>${score}</strong><span>Wellness</span></div>
+            <div class="mini-box"><strong>${wear ? `${Math.round(wear.steps).toLocaleString()}` : '--'}</strong><span>Steps</span></div>
+            <div class="mini-box"><strong>${wear ? `${wear.sleepHours.toFixed(1)}h` : '--'}</strong><span>Sleep</span></div>
+            <div class="mini-box"><strong>${Math.round(totals.calories)}</strong><span>Calories</span></div>
+            <div class="mini-box"><strong>${mental ? `${mental.mood}/5` : '--'}</strong><span>Mood</span></div>
+            <div class="mini-box"><strong>${state.profile.goal || 'General health'}</strong><span>Goal</span></div>
+          </div>
+          <p style="margin-top:14px; color:var(--muted); line-height:1.6;">Profile: ${getProfileSummary()}<br/>This summary is intended for personal wellness tracking and learning, not as a medical diagnosis. Not a medical device.</p>
+        `;
+      }
+
+      function renderSettings() {
+        const profile = state.profile;
+        document.getElementById('profile-name').value = profile.name || '';
+        document.getElementById('profile-age').value = profile.age || '';
+        document.getElementById('profile-sex').value = profile.sex || 'male';
+        document.getElementById('profile-height').value = profile.height || '';
+        document.getElementById('profile-weight').value = profile.weight || '';
+        document.getElementById('profile-goal').value = profile.goal || '';
+
+        document.getElementById('setting-units').value = state.settings.units || 'metric';
+        document.getElementById('setting-theme').value = state.settings.theme || 'light';
+        document.getElementById('setting-pin').value = state.settings.pin || '';
+        document.getElementById('setting-usda-key').value = state.settings.usdaApiKey || '';
+        document.getElementById('setting-demo').checked = !!state.settings.demoMode;
+      }
+
+      function setActiveTab(tabName) {
+        currentTab = tabName;
+        document.querySelectorAll('.screen').forEach(screen => screen.classList.toggle('active', screen.id === `screen-${tabName}`));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
+      }
+
+      function bindEvents() {
+        document.querySelectorAll('.tab-btn').forEach(button => {
+          button.addEventListener('click', () => setActiveTab(button.dataset.tab));
+        });
+
+        document.getElementById('search-food-btn').addEventListener('click', () => renderNutrition());
+        document.getElementById('food-search').addEventListener('input', renderNutrition);
+
+        document.getElementById('nutrition-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const name = document.getElementById('food-name').value.trim();
+          const unit = document.getElementById('portion-unit').value;
+          const quantity = normalizeNumber(document.getElementById('portion-qty').value, 0);
+          const directGrams = normalizeNumber(document.getElementById('grams-direct').value, 0);
+
+          if (!name) {
+            alert('Please select a food first');
+            return;
+          }
+
+          const grams = directGrams > 0 ? directGrams : unitToGrams(quantity, unit, name);
+          const estimation = estimateFood(name, grams);
+          state.nutritionEntries.push({
+            id: cryptoRandomId(),
+            date: getTodayKey(new Date()),
+            mealType: document.getElementById('meal-type').value,
+            name,
+            quantity,
+            unit,
+            grams,
+            calories: estimation.calories,
+            carbs: estimation.carbs,
+            protein: estimation.protein,
+            fat: estimation.fat,
+            sugar: estimation.sugar,
+            sodium: estimation.sodium
+          });
+
+          saveState();
+          document.getElementById('nutrition-form').reset();
+          document.getElementById('meal-type').value = 'breakfast';
+          document.getElementById('portion-unit').value = 'g';
+          document.getElementById('portion-qty').value = 100;
+          renderNutrition();
+          renderHome();
+          renderReports();
+        });
+
+        document.getElementById('body-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const record = {
+            date: getTodayKey(new Date()),
+            hr: normalizeNumber(document.getElementById('hr-value').value, 72),
+            restingHeartRate: normalizeNumber(document.getElementById('rhr-value').value, 62),
+            hrv: normalizeNumber(document.getElementById('hrv-value').value, 46),
+            steps: normalizeNumber(document.getElementById('steps-value').value, 6800),
+            sleepHours: normalizeNumber(document.getElementById('sleep-hours').value, 7.4),
+            sleepQuality: normalizeNumber(document.getElementById('sleep-quality').value, 78),
+            spo2: normalizeNumber(document.getElementById('spo2-value').value, 98),
+            activityMinutes: normalizeNumber(document.getElementById('activity-min').value, 46)
+          };
+          state.wearableEntries.push(record);
+          saveState();
+          renderHome();
+          renderBody();
+          renderReports();
+        });
+
+        document.getElementById('simulate-sync-btn').addEventListener('click', () => {
+          const now = new Date();
+          const base = 60 + Math.random() * 18;
+          const record = {
+            date: getTodayKey(now),
+            hr: Number((base + Math.random() * 8).toFixed(0)),
+            restingHeartRate: Number((56 + Math.random() * 8).toFixed(0)),
+            hrv: Number((35 + Math.random() * 25).toFixed(0)),
+            steps: Number((7000 + Math.random() * 3500).toFixed(0)),
+            sleepHours: Number((6.7 + Math.random() * 1.8).toFixed(1)),
+            sleepQuality: Number((70 + Math.random() * 25).toFixed(0)),
+            spo2: Number((97 + Math.random() * 2.5).toFixed(0)),
+            activityMinutes: Number((40 + Math.random() * 40).toFixed(0))
+          };
+          state.wearableEntries.push(record);
+          saveState();
+          renderHome();
+          renderBody();
+          renderReports();
+        });
+
+        document.getElementById('mind-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const entry = {
+            date: getTodayKey(new Date()),
+            mood: selectedMood,
+            stress: clamp(100 - selectedMood * 12 + normalizeNumber(document.getElementById('screen-time').value, 220) / 8, 10, 95),
+            screenTime: normalizeNumber(document.getElementById('screen-time').value, 220),
+            appSwitches: normalizeNumber(document.getElementById('app-switches').value, 24),
+            typingSpeed: normalizeNumber(document.getElementById('typing-speed').value, 50),
+            nightUsage: normalizeNumber(document.getElementById('night-usage').value, 30)
+          };
+          if (!state.mentalEntries.length || state.mentalEntries[state.mentalEntries.length - 1].date !== entry.date) {
+            state.mentalEntries.push(entry);
+          } else {
+            state.mentalEntries[state.mentalEntries.length - 1] = entry;
+          }
+          saveState();
+          renderMind();
+          renderHome();
+          renderInsights();
+          renderReports();
+        });
+
+        document.getElementById('show-factors-btn').addEventListener('click', renderInsights);
+
+        document.getElementById('profile-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const updated = {
+            name: document.getElementById('profile-name').value.trim(),
+            age: normalizeNumber(document.getElementById('profile-age').value, 28),
+            sex: document.getElementById('profile-sex').value,
+            height: normalizeNumber(document.getElementById('profile-height').value, 170),
+            weight: normalizeNumber(document.getElementById('profile-weight').value, 70),
+            goal: document.getElementById('profile-goal').value.trim() || 'Improve cardio health'
+          };
+          state.profile = updated;
+          if (!state.settings.baselineSaved) {
+            state.baseline = {
+              restingHeartRate: 62,
+              sleep: 7.5,
+              steps: 8000,
+              mood: 3,
+              totalCholesterol: 180,
+              bloodPressureSystolic: 120
+            };
+            state.settings.baselineSaved = true;
+          }
+          saveState();
+          renderHome();
+          renderReports();
+          renderSettings();
+          document.getElementById('onboarding-modal').classList.remove('open');
+        });
+
+        document.getElementById('setting-theme').addEventListener('change', () => {
+          state.settings.theme = document.getElementById('setting-theme').value;
+          saveState();
+          applyTheme();
+        });
+
+        document.getElementById('setting-units').addEventListener('change', () => {
+          state.settings.units = document.getElementById('setting-units').value;
+          saveState();
+        });
+
+        document.getElementById('setting-pin').addEventListener('change', () => {
+          state.settings.pin = document.getElementById('setting-pin').value.trim();
+          saveState();
+        });
+
+        document.getElementById('setting-usda-key').addEventListener('change', () => {
+          state.settings.usdaApiKey = document.getElementById('setting-usda-key').value.trim();
+          saveState();
+        });
+
+        document.getElementById('setting-demo').addEventListener('change', () => {
+          state.settings.demoMode = document.getElementById('setting-demo').checked;
+          if (state.settings.demoMode) {
+            ensureDemoData();
+            saveState();
+            renderAll();
+          }
+          saveState();
+        });
+
+        document.getElementById('demo-seed-btn').addEventListener('click', () => {
+          state.settings.demoMode = true;
+          ensureDemoData();
+          saveState();
+          renderAll();
+        });
+
+        document.getElementById('reset-data-btn').addEventListener('click', () => {
+          if (confirm('Clear all app data?')) {
+            state = defaultState();
+            localStorage.removeItem(STORAGE_KEY);
+            saveState();
+            renderAll();
+            document.getElementById('onboarding-modal').classList.add('open');
+          }
+        });
+
+        document.getElementById('lookup-usda-btn').addEventListener('click', async () => {
+          const q = document.getElementById('food-search').value.trim();
+          if (!state.settings.usdaApiKey) {
+            alert('Add your USDA API key in Settings before using this lookup.');
+            return;
+          }
+          if (!q) {
+            alert('Enter a food name to search USDA.');
+            return;
+          }
+          try {
+            const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(q)}&pageSize=5&api_key=${state.settings.usdaApiKey}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('USDA lookup failed');
+            const data = await response.json();
+            const results = data.foods || [];
+            if (!results.length) {
+              alert('No USDA match found for that food.');
+              return;
+            }
+            const list = document.getElementById('food-results');
+            list.innerHTML = results.slice(0, 5).map(food => {
+              const item = food.foodNutrients || [];
+              const energy = item.find(n => n.nutrientNumber === '208')?.value || 0;
+              const protein = item.find(n => n.nutrientNumber === '203')?.value || 0;
+              const carbs = item.find(n => n.nutrientNumber === '205')?.value || 0;
+              const fat = item.find(n => n.nutrientNumber === '204')?.value || 0;
+              const sugar = item.find(n => n.nutrientNumber === '269')?.value || 0;
+              const sodium = item.find(n => n.nutrientNumber === '307')?.value || 0;
+              return `
+                <button class="food-item" type="button" data-food="${food.description}">
+                  <div>
+                    <strong>${food.description}</strong>
+                    <small>${energy} kcal / 100 g | P ${protein}g C ${carbs}g F ${fat}g</small>
+                  </div>
+                  <span class="badge">Use</span>
+                </button>
+              `;
+            }).join('');
+
+            list.querySelectorAll('.food-item').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const itemName = btn.dataset.food;
+                document.getElementById('food-name').value = itemName;
+                document.getElementById('portion-unit').value = 'g';
+                document.getElementById('portion-qty').value = 100;
+                document.getElementById('grams-direct').value = 100;
+              });
+            });
+          } catch (error) {
+            alert('Could not fetch USDA data. Check the API key or internet connection.');
+          }
+        });
+
+        document.getElementById('onboarding-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          state.profile = {
+            name: document.getElementById('onboard-name').value.trim(),
+            age: normalizeNumber(document.getElementById('onboard-age').value, 28),
+            sex: document.getElementById('onboard-sex').value,
+            height: normalizeNumber(document.getElementById('onboard-height').value, 170),
+            weight: normalizeNumber(document.getElementById('onboard-weight').value, 70),
+            goal: document.getElementById('onboard-goal').value.trim() || 'Improve cardio health'
+          };
+          state.settings.baselineSaved = true;
+          saveState();
+          document.getElementById('onboarding-modal').classList.remove('open');
+          renderHome();
+          renderReports();
+          renderSettings();
+        });
+
+        document.getElementById('unlock-btn').addEventListener('click', () => {
+          const pin = document.getElementById('lock-pin').value.trim();
+          if (pin === state.settings.pin) {
+            lockUnlocked = true;
+            document.getElementById('lock-modal').classList.remove('open');
+          } else {
+            alert('Incorrect PIN. Try again.');
+          }
+        });
+
+        document.getElementById('print-report-btn').addEventListener('click', () => window.print());
+
+        document.getElementById('export-json-btn').addEventListener('click', () => {
+          const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+          downloadBlob(blob, 'wellsense-export.json');
+        });
+
+        document.getElementById('export-csv-btn').addEventListener('click', () => {
+          const rows = [];
+          rows.push(['date', 'mealType', 'name', 'calories', 'carbs', 'protein', 'fat', 'sugar', 'sodium']);
+          state.nutritionEntries.forEach(item => rows.push([item.date, item.mealType, item.name, item.calories, item.carbs, item.protein, item.fat, item.sugar, item.sodium]));
+          const csv = rows.map(row => row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+          downloadBlob(new Blob([csv], { type: 'text/csv' }), 'wellsense-export.csv');
+        });
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function getDailyTotals(date) {
+        const day = getTodayKey(date);
+        const entries = state.nutritionEntries.filter(item => item.date === day);
+        const totals = entries.reduce((acc, item) => {
+          acc.calories += item.calories || 0;
+          acc.carbs += item.carbs || 0;
+          acc.protein += item.protein || 0;
+          acc.fat += item.fat || 0;
+          acc.sugar += item.sugar || 0;
+          acc.sodium += item.sodium || 0;
+          return acc;
+        }, { calories: 0, carbs: 0, protein: 0, fat: 0, sugar: 0, sodium: 0 });
+
+        const totalMacros = totals.carbs + totals.protein + totals.fat;
+        return {
+          ...totals,
+          macros: {
+            carbs: totalMacros ? (totals.carbs / totalMacros) * 100 : 0,
+            protein: totalMacros ? (totals.protein / totalMacros) * 100 : 0,
+            fat: totalMacros ? (totals.fat / totalMacros) * 100 : 0
+          }
+        };
+      }
+
+      function getLatestWearable() {
+        if (!state.wearableEntries.length) return null;
+        return state.wearableEntries.slice().sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+      }
+
+      function getLatestMental() {
+        if (!state.mentalEntries.length) return null;
+        return state.mentalEntries.slice().sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+      }
+
+      function getWearableSeries(daysBack = 7) {
+        const data = [];
+        const today = new Date();
+        for (let i = daysBack - 1; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          const key = getTodayKey(date);
+          const record = state.wearableEntries.filter(item => item.date === key)[0] || null;
+          if (!record) {
+            data.push({ label: date.toLocaleDateString(undefined, { weekday: 'short' }), value: 50 });
+          } else {
+            const score = clamp(Math.round((record.sleepHours * 10 + record.steps / 100 + record.spo2 * 1.5 + record.activityMinutes / 3) / 2), 0, 100);
+            data.push({ label: date.toLocaleDateString(undefined, { weekday: 'short' }), value: score });
+          }
+        }
+        return data;
+      }
+
+      function getWeeklyScores() {
+        const points = [];
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(today.getDate() - i);
+          const score = getDateScore(date);
+          points.push({ label: date.toLocaleDateString(undefined, { weekday: 'short' }), value: score });
+        }
+        const avg = Math.round(points.reduce((sum, p) => sum + p.value, 0) / points.length);
+        return { points, avg };
+      }
+
+      function getDateScore(date) {
+        const key = getTodayKey(date);
+        const wear = state.wearableEntries.filter(item => item.date === key)[0];
+        const nutrition = getDailyTotals(date);
+        const mental = state.mentalEntries.filter(item => item.date === key)[0];
+        let score = 55;
+        if (wear) {
+          score += (wear.sleepHours * 2.2) + (wear.steps / 150) - (wear.restingHeartRate * 0.25) + (wear.hrv / 5);
+        }
+        if (nutrition.calories > 0) score += 12;
+        if (mental) score += (mental.mood * 7) - mental.stress / 2;
+        return clamp(Math.round(score), 0, 100);
+      }
+
+      function computeWellnessScore() {
+        const wear = getLatestWearable();
+        const nutrition = getDailyTotals(new Date());
+        const mental = getLatestMental();
+        const blood = getLatestBlood();
+
+        let score = 100;
+        const factors = [];
+
+        const base = state.baseline || {};
+
+        if (wear) {
+          const rhrDelta = wear.restingHeartRate - (base.restingHeartRate || 62);
+          const rhrEffect = clamp((rhrDelta * -2.5), -20, 10);
+          score += rhrEffect;
+          factors.push({ label: 'Resting heart rate', value: Math.round(rhrEffect), explanation: rhrDelta > 0 ? `Resting heart rate is ${Math.abs(rhrDelta)} bpm above your baseline: ${Math.round(rhrEffect)} points.` : `Resting heart rate is ${Math.abs(rhrDelta)} bpm below baseline: ${Math.round(rhrEffect)} points.` });
+
+          const sleepDelta = wear.sleepHours - (base.sleep || 7.5);
+          const sleepEffect = clamp(sleepDelta * 10, -15, 12);
+          score += sleepEffect;
+          factors.push({ label: 'Sleep quality', value: Math.round(sleepEffect), explanation: sleepDelta >= 0 ? `Sleep is ${Math.abs(sleepDelta).toFixed(1)} h above baseline, supporting recovery.` : `Sleep is ${Math.abs(sleepDelta).toFixed(1)} h below baseline, reducing recovery.` });
+
+          const stepGap = wear.steps - (base.steps || 8000);
+          const stepEffect = clamp(stepGap / 180, -12, 8);
+          score += stepEffect;
+          factors.push({ label: 'Movement', value: Math.round(stepEffect), explanation: stepGap >= 0 ? `Your movement exceeds baseline by ${Math.round(stepGap).toLocaleString()} steps.` : `Movement is ${Math.round(Math.abs(stepGap)).toLocaleString()} steps below baseline.` });
+        }
+
+        const calorieTarget = getTargetCalories();
+        const calorieDelta = nutrition.calories - calorieTarget;
+        const calorieEffect = clamp((calorieDelta / 200) * -8, -15, 10);
+        score += calorieEffect;
+        factors.push({ label: 'Nutrition balance', value: Math.round(calorieEffect), explanation: calorieDelta > 0 ? `Calories are above target by ${Math.round(calorieDelta)} kcal, reducing the score.` : `Calories are within or below target by ${Math.round(Math.abs(calorieDelta))} kcal, supporting balance.` });
+
+        if (blood) {
+          const cholesterolDelta = blood.totalCholesterol - (base.totalCholesterol || 180);
+          const cholEffect = clamp(cholesterolDelta * -0.3, -12, 8);
+          score += cholEffect;
+          factors.push({ label: 'Lipid profile', value: Math.round(cholEffect), explanation: cholesterolDelta > 0 ? `Total cholesterol is ${Math.abs(cholesterolDelta)} mg/dL above baseline.` : `Total cholesterol is ${Math.abs(cholesterolDelta)} mg/dL below baseline, which is favorable.` });
+        }
+
+        if (mental) {
+          const moodEffect = (mental.mood - (base.mood || 3)) * 9;
+          const stressEffect = (mental.stress - 40) * -0.2;
+          score += moodEffect + stressEffect;
+          factors.push({ label: 'Mood & stress', value: Math.round(moodEffect + stressEffect), explanation: `Mood and stress are ${mental.mood > 3 ? 'more favorable' : 'more pressured'} than your earlier baseline pattern.` });
+        }
+
+        const finalScore = clamp(Math.round(score), 0, 100);
+        let tier = 'Strong';
+        if (finalScore >= 80) tier = 'Excellent';
+        else if (finalScore >= 65) tier = 'Good';
+        else if (finalScore >= 50) tier = 'Watch';
+        else tier = 'Needs attention';
+
+        const recommendations = [];
+        if (finalScore < 60) {
+          recommendations.push({ text: 'Increase sleep consistency and reduce late-night screen time to rebuild energy recovery.', level: 'high' });
+        }
+        if (wear && wear.restingHeartRate > (base.restingHeartRate || 62) + 7) {
+          recommendations.push({ text: 'Check hydration, caffeine timing, and recovery after exercise; your resting heart rate is elevated versus baseline.', level: 'mid' });
+        }
+        if (nutrition.calories > calorieTarget + 200) {
+          recommendations.push({ text: 'Trim energy-dense snacks and focus on protein, fiber, and whole foods around post-meal satiety.', level: 'mid' });
+        }
+        if (mental && mental.stress > 55) {
+          recommendations.push({ text: 'Schedule a short reset: breathing, walking, or a low-screen break to manage stress load.', level: 'mid' });
+        }
+        if (recommendations.length === 0) {
+          recommendations.push({ text: 'Keep the current rhythm: sleep, movement, and balanced meals are all supporting a strong cardiac pattern.', level: 'good' });
+        }
+
+        return { score: finalScore, tier, factors: factors.sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, 5), recommendations };
+      }
+
+      function getAlerts() {
+        const alerts = [];
+        const wear = getLatestWearable();
+        const mental = getLatestMental();
+        const blood = getLatestBlood();
+
+        if (wear && wear.restingHeartRate > (state.baseline.restingHeartRate || 62) + 8) {
+          alerts.push({ level: 'warning', text: 'Resting heart rate is above your baseline by more than 8 bpm.' });
+        }
+        if (wear && wear.sleepHours < 6.5) {
+          alerts.push({ level: 'danger', text: 'Sleep is below the recommended threshold for recovery.' });
+        }
+        if (blood && blood.totalCholesterol > 200) {
+          alerts.push({ level: 'warning', text: 'Total cholesterol has moved into the high range.' });
+        }
+        if (mental && mental.stress > 60) {
+          alerts.push({ level: 'warning', text: 'Stress estimate is elevated; consider short breaks or breathing drills.' });
+        }
+        if (!alerts.length) {
+          alerts.push({ level: 'success', text: 'No major alerts today — your pattern looks stable.' });
+        }
+        return alerts.slice(0, 3);
+      }
+
+      function getLatestBlood() {
+        if (!state.bloodReports.length) return null;
+        return state.bloodReports.slice().sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+      }
+
+      function getTargetCalories() {
+        if (!state.profile.weight) return 2000;
+        return clamp((state.profile.weight * 28) + 400, 1800, 2600);
+      }
+
+      function emojiFromMood(value) {
+        const map = {
+          1: '😞', 2: '😕', 3: '🙂', 4: '😊', 5: '😁'
+        };
+        return map[value] || '🙂';
+      }
+
+      function renderLineChart(points, options, mode) {
+        const width = options.width || 320;
+        const height = options.height || 120;
+        const margin = 16;
+        const max = Math.max(...points.map(p => p.value), 100);
+        const min = Math.min(...points.map(p => p.value), 0);
+        const range = Math.max(1, max - min);
+
+        const path = points.map((point, i) => {
+          const x = margin + (i * (width - margin * 2)) / Math.max(1, points.length - 1);
+          const y = height - margin - ((point.value - min) / range) * (height - margin * 2);
+          return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+        }).join(' ');
+
+        const circles = points.map((point, i) => {
+          const x = margin + (i * (width - margin * 2)) / Math.max(1, points.length - 1);
+          const y = height - margin - ((point.value - min) / range) * (height - margin * 2);
+          return `<circle cx="${x}" cy="${y}" r="3.5" fill="${options.color || '#17b6b0'}" />`;
+        }).join('');
+
+        return `
+          <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+            <path d="${path}" fill="none" stroke="${options.color || '#17b6b0'}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+            ${circles}
+          </svg>
+        `;
+      }
+
+      function renderAll() {
+        renderHome();
+        renderNutrition();
+        renderBody();
+        renderMind();
+        renderInsights();
+        renderReports();
+        renderSettings();
+      }
+
+      function init() {
+        ensureDemoData();
+        applyTheme();
+        bindEvents();
+        renderAll();
+
+        if (state.profile && state.profile.name) {
+          document.getElementById('onboarding-modal').classList.remove('open');
+        }
+
+        if (state.settings.pin) {
+          document.getElementById('lock-modal').classList.add('open');
+        } else {
+          document.getElementById('lock-modal').classList.remove('open');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
